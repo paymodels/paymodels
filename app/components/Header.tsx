@@ -7,7 +7,8 @@ import { Home, HelpCircle, BookOpen, Sparkles, Zap, LogIn, Search, Menu } from '
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { signIn, signOut, useSession } from '@/lib/auth-client';
+import { signOut, useSession } from '@/lib/auth-client';
+import { LoginDialog } from './LoginDialog';
 
 const menus = [
     { label: '首页', href: '/', icon: Home },
@@ -20,6 +21,7 @@ const menus = [
 export default function Header() {
     const { data: session } = useSession();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [loginOpen, setLoginOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -86,7 +88,7 @@ export default function Header() {
                         <Button
                             size="sm"
                             className="hidden sm:inline-flex"
-                            onClick={() => signIn("google")}
+                            onClick={() => setLoginOpen(true)}
                         >
                             <LogIn data-icon="inline-start" />
                             登录
@@ -169,7 +171,7 @@ export default function Header() {
                                     <Button
                                         className="w-full"
                                         onClick={() => {
-                                            signIn("google");
+                                            setLoginOpen(true);
                                             setMobileOpen(false);
                                         }}
                                     >
@@ -182,6 +184,7 @@ export default function Header() {
                     </Sheet>
                 </div>
             </div>
+            <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
         </header>
     );
 }
