@@ -16,7 +16,7 @@ interface LoginDialogProps {
     onSwitchToRegister: () => void;
 }
 
-export function LoginDialog({ open, onOpenChange, onSwitchToRegister }: LoginDialogProps) {
+export function LoginDialog({ open, onOpenChange, onSwitchToRegister = () => {} }: LoginDialogProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
