@@ -1,0 +1,105 @@
+<h2>文档中心设计方案 — 标准布局</h2>
+<p class="subtitle">基于您的选择：左侧内容 + 右侧导航 + 路由分页面</p>
+
+<div class="section">
+    <h3>1. 信息架构</h3>
+    <div class="mockup">
+        <div class="mockup-header">URL 结构</div>
+        <div class="mockup-body">
+            <ul>
+                <li><strong>/docs</strong> — 文档中心首页（重定向到 /docs/faq 或展示概览）</li>
+                <li>
+                    <strong>/docs/faq</strong> — 常见问题（6个手风琴展开项，从现有 FAQ.tsx 迁移）
+                </li>
+                <li><strong>/docs/guide-recharge</strong> — 充值教程</li>
+                <li><strong>/docs/guide-token</strong> — Token 获取指南</li>
+                <li><strong>/docs/refund-policy</strong> — 退款政策</li>
+                <li><strong>/docs/payment-methods</strong> — 支付方式说明</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>2. 页面布局</h3>
+    <div class="mockup">
+        <div class="mockup-header">桌面端（≥1024px）</div>
+        <div class="mockup-body">
+            <div style="display: flex; gap: 2rem">
+                <div style="flex: 2; min-width: 0">
+                    <div class="mock-nav" style="margin-bottom: 1rem">
+                        面包屑：首页 &gt; 文档 &gt; 常见问题
+                    </div>
+                    <div class="mock-content">
+                        <h1>常见问题</h1>
+                        <p>关于 ChatGPT Plus / Pro 充值的常见疑问...</p>
+                        <div class="placeholder" style="height: 80px; margin: 1rem 0">
+                            FAQ 手风琴内容区
+                        </div>
+                    </div>
+                </div>
+                <div style="flex: 1; min-width: 200px">
+                    <div class="mock-sidebar" style="position: sticky; top: 5rem">
+                        <strong>文档导航</strong>
+                        <ul style="margin-top: 0.5rem; padding-left: 1rem; font-size: 0.9em">
+                            <li>常见问题</li>
+                            <li>使用指南</li>
+                            <li>退款政策</li>
+                            <li>支付方式</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>3. 移动端适配</h3>
+    <div class="mockup">
+        <div class="mockup-header">移动端（&lt;1024px）</div>
+        <div class="mockup-body">
+            <div class="mock-nav">☰ 菜单 | 常见问题</div>
+            <div class="mock-content">
+                <p>点击 ☰ 展开 overlay 面板显示全部文档导航</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>4. 视觉风格</h3>
+    <ul>
+        <li>沿用现有 shadcn 主题 token：bg-background、text-foreground、border-border 等</li>
+        <li>内容区最大宽度 max-w-3xl，保持舒适的阅读行宽</li>
+        <li>右侧 sidebar 使用 bg-muted/30 轻微区分背景</li>
+        <li>当前页面导航项使用 text-primary + font-medium 高亮</li>
+        <li>分隔线使用 Separator 组件</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>5. 可扩展性设计</h3>
+    <ul>
+        <li>导航数据使用配置数组，新增文档只需添加一条配置</li>
+        <li>支持文档分组（如「入门指南」、「账户相关」、「退款政策」）</li>
+        <li>预留搜索功能接口（未来可实现文档全文搜索）</li>
+    </ul>
+</div>
+
+<div class="options">
+    <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+        <div class="letter">✓</div>
+        <div class="content">
+            <h3>这个设计符合我的预期</h3>
+            <p>继续下一步，开始编写设计文档</p>
+        </div>
+    </div>
+    <div class="option" data-choice="revise" onclick="toggleSelect(this)">
+        <div class="letter">✎</div>
+        <div class="content">
+            <h3>需要调整某些部分</h3>
+            <p>告诉我具体哪里需要修改</p>
+        </div>
+    </div>
+</div>

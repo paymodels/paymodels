@@ -114,7 +114,9 @@ export function RegisterDialog({ open, onOpenChange, onSwitchToLogin }: Register
                                             required
                                         />
                                         {fieldErrors.email && (
-                                            <p className="text-sm text-destructive">{fieldErrors.email}</p>
+                                            <p className="text-sm text-destructive">
+                                                {fieldErrors.email}
+                                            </p>
                                         )}
                                     </Field>
                                     <Field>
@@ -135,11 +137,15 @@ export function RegisterDialog({ open, onOpenChange, onSwitchToLogin }: Register
                                             required
                                         />
                                         {fieldErrors.password && (
-                                            <p className="text-sm text-destructive">{fieldErrors.password}</p>
+                                            <p className="text-sm text-destructive">
+                                                {fieldErrors.password}
+                                            </p>
                                         )}
                                     </Field>
                                     <Field>
-                                        <FieldLabel htmlFor="register-confirm-password">确认密码</FieldLabel>
+                                        <FieldLabel htmlFor="register-confirm-password">
+                                            确认密码
+                                        </FieldLabel>
                                         <Input
                                             id="register-confirm-password"
                                             type="password"
@@ -156,7 +162,9 @@ export function RegisterDialog({ open, onOpenChange, onSwitchToLogin }: Register
                                             required
                                         />
                                         {fieldErrors.confirmPassword && (
-                                            <p className="text-sm text-destructive">{fieldErrors.confirmPassword}</p>
+                                            <p className="text-sm text-destructive">
+                                                {fieldErrors.confirmPassword}
+                                            </p>
                                         )}
                                     </Field>
                                     {error && <p className="text-sm text-destructive">{error}</p>}

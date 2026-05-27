@@ -22,7 +22,14 @@ export const metadata: Metadata = {
     },
     description:
         'ChatGPT Plus 月卡、Pro 5X、Pro 20X 官方渠道充值，安全可靠，充值失败全额退款。支持微信支付和 Stripe 支付，Token 仅用于本次充值。',
-    keywords: ['ChatGPT 充值', 'ChatGPT Plus', 'ChatGPT Pro', 'OpenAI 充值', 'GPT 升级', 'ChatGPT 月卡'],
+    keywords: [
+        'ChatGPT 充值',
+        'ChatGPT Plus',
+        'ChatGPT Pro',
+        'OpenAI 充值',
+        'GPT 升级',
+        'ChatGPT 月卡',
+    ],
     authors: [{ name: 'PayModels' }],
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
     robots: {

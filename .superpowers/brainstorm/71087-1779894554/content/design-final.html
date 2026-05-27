@@ -1,0 +1,284 @@
+<h2>完整设计方案 v3 — 包含评论功能</h2>
+<p class="subtitle">左侧内容 + 右侧导航 + 长文阅读 + 底部评论</p>
+
+<div class="section">
+    <h3>1. 页面整体结构</h3>
+    <div class="mockup">
+        <div class="mockup-header">桌面端布局</div>
+        <div class="mockup-body">
+            <div style="display: flex; gap: 2rem">
+                <div style="flex: 2; min-width: 0">
+                    <div class="mock-nav" style="margin-bottom: 1rem; font-size: 0.9em">
+                        首页 &gt; 文档 &gt; 使用指南 &gt; 如何获取 Token
+                    </div>
+
+                    <div class="mock-content">
+                        <h1>如何获取 Token</h1>
+                        <p>本文将详细介绍如何获取 ChatGPT 的 Access Token...</p>
+                        <div class="placeholder" style="height: 120px; margin: 1rem 0">
+                            长文内容区域（h2、h3 标题层级）
+                        </div>
+                    </div>
+
+                    <div
+                        style="
+                            border-top: 2px solid var(--border);
+                            margin: 2rem 0;
+                            padding-top: 2rem;
+                        "
+                    >
+                        <h2>评论区</h2>
+                        <div
+                            style="
+                                background: var(--muted);
+                                padding: 1rem;
+                                border-radius: 8px;
+                                margin: 1rem 0;
+                            "
+                        >
+                            <div style="display: flex; align-items: center; gap: 0.5rem">
+                                <div class="mock-button" style="font-size: 0.85em">
+                                    登录后发表评论
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="flex: 1; min-width: 220px">
+                    <div
+                        class="mock-sidebar"
+                        style="position: sticky; top: 5rem; font-size: 0.85em"
+                    >
+                        <div style="margin-bottom: 1.5rem">
+                            <strong
+                                style="
+                                    font-size: 0.9em;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                "
+                                >文档导航</strong
+                            >
+                            <ul
+                                style="
+                                    margin-top: 0.5rem;
+                                    padding-left: 0;
+                                    list-style: none;
+                                    line-height: 2;
+                                "
+                            >
+                                <li>▸ 常见问题</li>
+                                <li>
+                                    <strong>▼ 使用指南</strong>
+                                    <ul style="padding-left: 1rem; margin-top: 0.2rem">
+                                        <li style="color: var(--primary)">如何获取 Token</li>
+                                        <li>如何充值 Plus</li>
+                                        <li>Pro 充值指南</li>
+                                    </ul>
+                                </li>
+                                <li>▶ 退款政策</li>
+                                <li>▶ 支付方式</li>
+                            </ul>
+                        </div>
+
+                        <div style="border-top: 1px solid var(--border); padding-top: 1rem">
+                            <strong
+                                style="
+                                    font-size: 0.9em;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.05em;
+                                "
+                                >本页目录</strong
+                            >
+                            <ul
+                                style="
+                                    margin-top: 0.5rem;
+                                    padding-left: 0;
+                                    list-style: none;
+                                    line-height: 2;
+                                "
+                            >
+                                <li>什么是 Token</li>
+                                <li>获取步骤</li>
+                                <li>注意事项</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>2. 评论区详细设计</h3>
+    <div class="mockup">
+        <div class="mockup-header">评论区状态</div>
+        <div class="mockup-body">
+            <div style="display: flex; flex-direction: column; gap: 1.5rem">
+                <div>
+                    <h3 style="margin-bottom: 1rem">状态 A：未登录</h3>
+                    <div
+                        style="
+                            background: var(--muted);
+                            padding: 1.5rem;
+                            border-radius: 8px;
+                            text-align: center;
+                        "
+                    >
+                        <p style="margin-bottom: 1rem">登录后发表评论</p>
+                        <div style="display: flex; gap: 0.5rem; justify-content: center">
+                            <span class="mock-button" style="font-size: 0.85em">Google 登录</span>
+                            <span class="mock-button" style="font-size: 0.85em">邮箱登录</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom: 1rem">状态 B：已登录 + 发表评论</h3>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem">
+                        <div
+                            style="
+                                width: 40px;
+                                height: 40px;
+                                background: var(--primary);
+                                border-radius: 50%;
+                                flex-shrink: 0;
+                            "
+                        ></div>
+                        <div style="flex: 1">
+                            <div class="mock-input" style="margin-bottom: 0.5rem; min-height: 80px">
+                                输入评论内容...
+                            </div>
+                            <div
+                                style="
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                "
+                            >
+                                <span style="font-size: 0.85em; color: var(--muted-foreground)"
+                                    >以 用户名 发表评论</span
+                                >
+                                <span class="mock-button" style="font-size: 0.85em">发表评论</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom: 1rem">状态 C：评论列表</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem">
+                        <div
+                            style="
+                                display: flex;
+                                gap: 1rem;
+                                padding: 1rem;
+                                border-bottom: 1px solid var(--border);
+                            "
+                        >
+                            <div
+                                style="
+                                    width: 36px;
+                                    height: 36px;
+                                    background: var(--accent);
+                                    border-radius: 50%;
+                                    flex-shrink: 0;
+                                "
+                            ></div>
+                            <div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.5rem;
+                                        margin-bottom: 0.3rem;
+                                    "
+                                >
+                                    <strong>用户昵称</strong>
+                                    <span style="font-size: 0.8em; color: var(--muted-foreground)"
+                                        >2小时前</span
+                                    >
+                                </div>
+                                <p>这篇文章很有帮助，按照步骤成功获取了 Token！</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; padding: 1rem">
+                            <div
+                                style="
+                                    width: 36px;
+                                    height: 36px;
+                                    background: var(--accent);
+                                    border-radius: 50%;
+                                    flex-shrink: 0;
+                                "
+                            ></div>
+                            <div>
+                                <div
+                                    style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 0.5rem;
+                                        margin-bottom: 0.3rem;
+                                    "
+                                >
+                                    <strong>另一个用户</strong>
+                                    <span style="font-size: 0.8em; color: var(--muted-foreground)"
+                                        >5小时前</span
+                                    >
+                                </div>
+                                <p>请问获取 Token 后有效期是多久？</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>3. 数据模型</h3>
+    <div class="mockup">
+        <div class="mockup-header">Supabase 表结构</div>
+        <div class="mockup-body">
+            <p><strong>pm_doc_comments</strong></p>
+            <ul>
+                <li>id: uuid (主键)</li>
+                <li>doc_slug: string (关联文档，如 "guide-token")</li>
+                <li>user_id: uuid (关联 pm_users)</li>
+                <li>content: text (评论内容)</li>
+                <li>created_at: timestamp</li>
+            </ul>
+            <p style="margin-top: 1rem">查询时 JOIN pm_users 获取用户昵称和头像</p>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>4. 技术要点</h3>
+    <ul>
+        <li>评论使用 Next.js API Route 处理 CRUD</li>
+        <li>使用 Supabase 存储评论数据</li>
+        <li>服务端获取评论列表，客户端提交新评论</li>
+        <li>提交后乐观更新或刷新评论列表</li>
+        <li>支持基本的 XSS 防护（内容转义）</li>
+    </ul>
+</div>
+
+<div class="options">
+    <div class="option" data-choice="approve-final" onclick="toggleSelect(this)">
+        <div class="letter">✓</div>
+        <div class="content">
+            <h3>完整设计符合预期</h3>
+            <p>开始编写设计文档并进入实施阶段</p>
+        </div>
+    </div>
+    <div class="option" data-choice="revise-final" onclick="toggleSelect(this)">
+        <div class="letter">✎</div>
+        <div class="content">
+            <h3>还需要调整</h3>
+            <p>告诉我具体哪里需要修改</p>
+        </div>
+    </div>
+</div>

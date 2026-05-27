@@ -1,0 +1,124 @@
+<h2>修订版设计方案</h2>
+<p class="subtitle">基于您的反馈：长文阅读 + 层级导航</p>
+
+<div class="section">
+    <h3>1. 内容展示方式</h3>
+    <div class="mockup">
+        <div class="mockup-header">FAQ 页面示例</div>
+        <div class="mockup-body">
+            <div style="display: flex; gap: 2rem">
+                <div style="flex: 2; min-width: 0">
+                    <h1>常见问题</h1>
+                    <div style="margin: 1.5rem 0">
+                        <h2>Plus 代充安全吗？</h2>
+                        <p>
+                            我们通过官方支付渠道为您充值，整个过程无需您的账号密码，只需一个临时会话令牌...
+                        </p>
+                    </div>
+                    <div style="margin: 1.5rem 0">
+                        <h2>没有海外信用卡，如何充值 Plus？</h2>
+                        <p>
+                            这正是 PayModels 的核心价值。您使用微信支付即可完成 ChatGPT Plus 订阅...
+                        </p>
+                    </div>
+                    <div style="margin: 1.5rem 0">
+                        <h2>充值大概多久能到账？</h2>
+                        <p>充值由人工处理，通常 3–6 小时内完成...</p>
+                    </div>
+                </div>
+                <div style="flex: 1; min-width: 200px">
+                    <div class="mock-sidebar" style="position: sticky; top: 5rem; font-size: 0.9em">
+                        <strong>本页目录</strong>
+                        <ul style="margin-top: 0.5rem; padding-left: 1rem; line-height: 2">
+                            <li>Plus 代充安全吗？</li>
+                            <li>没有海外信用卡？</li>
+                            <li>充值多久到账？</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p class="subtitle">每个问题作为文章中的 h2 标题，直接展开，不再使用手风琴折叠</p>
+</div>
+
+<div class="section">
+    <h3>2. 层级导航结构</h3>
+    <div class="mockup">
+        <div class="mockup-header">右侧导航（支持展开/折叠）</div>
+        <div class="mockup-body">
+            <div class="mock-sidebar" style="font-size: 0.9em; line-height: 2.2">
+                <div style="margin-bottom: 1rem">
+                    <strong>▼ 常见问题</strong>
+                    <ul style="padding-left: 1.2rem; margin-top: 0.3rem">
+                        <li style="color: var(--primary)">常见问题总览</li>
+                    </ul>
+                </div>
+                <div style="margin-bottom: 1rem">
+                    <strong>▼ 使用指南</strong>
+                    <ul style="padding-left: 1.2rem; margin-top: 0.3rem">
+                        <li>如何获取 Token</li>
+                        <li>如何充值 Plus</li>
+                        <li>▸ Pro 充值指南</li>
+                    </ul>
+                </div>
+                <div style="margin-bottom: 1rem">
+                    <strong>▶ 退款政策</strong>
+                </div>
+                <div>
+                    <strong>▶ 支付方式</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>3. 更新的 URL 结构</h3>
+    <div class="mockup">
+        <div class="mockup-header">支持层级的路由</div>
+        <div class="mockup-body">
+            <ul>
+                <li><strong>/docs</strong> → 重定向到 /docs/faq</li>
+                <li><strong>/docs/faq</strong> → 常见问题（长文）</li>
+                <li><strong>/docs/guide</strong> → 使用指南首页</li>
+                <li><strong>/docs/guide/token</strong> → 如何获取 Token</li>
+                <li><strong>/docs/guide/recharge-plus</strong> → 如何充值 Plus</li>
+                <li><strong>/docs/guide/recharge-pro</strong> → 如何充值 Pro</li>
+                <li><strong>/docs/refund</strong> → 退款政策</li>
+                <li><strong>/docs/payment</strong> → 支付方式说明</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>4. 右侧导航的两种显示模式</h3>
+    <div class="mockup">
+        <div class="mockup-header">桌面端右侧 sidebar</div>
+        <div class="mockup-body">
+            <p><strong>上半部分：</strong>全局文档导航（可展开/折叠的分组）</p>
+            <p><strong>下半部分：</strong>当前页面的目录（h2/h3 锚点，滚动时高亮）</p>
+            <div class="placeholder" style="margin-top: 1rem; height: 60px">
+                全局导航和页面目录之间用 Separator 分隔
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="options">
+    <div class="option" data-choice="approve-v2" onclick="toggleSelect(this)">
+        <div class="letter">✓</div>
+        <div class="content">
+            <h3>修订版设计符合预期</h3>
+            <p>开始编写设计文档</p>
+        </div>
+    </div>
+    <div class="option" data-choice="revise-v2" onclick="toggleSelect(this)">
+        <div class="letter">✎</div>
+        <div class="content">
+            <h3>还需要调整</h3>
+            <p>告诉我具体哪里需要修改</p>
+        </div>
+    </div>
+</div>

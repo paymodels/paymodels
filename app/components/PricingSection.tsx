@@ -69,7 +69,9 @@ export default async function PricingSection() {
                             </div>
 
                             <div className="mt-6">
-                                <span className="text-4xl font-bold">{formatPrice(plan.price)}</span>
+                                <span className="text-4xl font-bold">
+                                    {formatPrice(plan.price)}
+                                </span>
                                 <span className="text-muted-foreground">/月</span>
                                 {plan.sub_price && (
                                     <p className="mt-1 text-sm text-muted-foreground">

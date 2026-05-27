@@ -1,0 +1,35 @@
+<h2>文档中心布局方式</h2>
+<p class="subtitle">选择整体信息架构和导航方式</p>
+
+<div class="options">
+    <div class="option" data-choice="sidebar-docs" onclick="toggleSelect(this)">
+        <div class="letter">A</div>
+        <div class="content">
+            <h3>侧边栏导航 + 内容区</h3>
+            <p>
+                左侧固定侧边栏列出所有文档类别和文章，右侧显示具体内容。适合内容较多、需要快速跳转的文档系统（如
+                Docusaurus、Stripe Docs 风格）。
+            </p>
+        </div>
+    </div>
+    <div class="option" data-choice="card-hub" onclick="toggleSelect(this)">
+        <div class="letter">B</div>
+        <div class="content">
+            <h3>卡片网格首页</h3>
+            <p>
+                /docs
+                首页展示各个板块的大卡片（常见问题、使用指南、退款政策等），点击进入后在该板块内展示文章列表。适合板块之间独立性较强的帮助中心。
+            </p>
+        </div>
+    </div>
+    <div class="option" data-choice="hybrid" onclick="toggleSelect(this)">
+        <div class="letter">C</div>
+        <div class="content">
+            <h3>混合布局</h3>
+            <p>
+                /docs 首页用卡片网格展示各个板块概览；点击某个板块后，进入「侧边栏 +
+                内容」的文档阅读模式。兼顾首页的直观性和子页面的阅读体验。
+            </p>
+        </div>
+    </div>
+</div>

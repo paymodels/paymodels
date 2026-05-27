@@ -53,7 +53,7 @@ export default function Home() {
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
                         </span>
-                        充值失败全额退款，放心购买
+                        充值保障中，请放心购买
                     </div>
 
                     <h1 className="text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl lg:text-7xl opacity-0 animate-[fadeUp_0.5s_ease-out_0.2s_forwards]">

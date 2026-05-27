@@ -1,0 +1,88 @@
+<h2>文档中心布局方案</h2>
+<p class="subtitle">在「左侧内容 + 右侧导航」框架下的 3 种设计方向</p>
+
+<div class="options">
+    <div class="option" data-choice="standard" onclick="toggleSelect(this)">
+        <div class="letter">A</div>
+        <div class="content">
+            <h3>标准文档布局（推荐）</h3>
+            <p>
+                内容区居左（max-w-3xl），右侧固定 sidebar
+                列出所有文档页面链接。顶部有面包屑导航。移动端汉堡菜单展开 overlay
+                面板显示全部导航。
+            </p>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>优势</h4>
+                    <ul>
+                        <li>平衡内容阅读和全局导航</li>
+                        <li>用户随时知道自己在哪、还能去哪</li>
+                        <li>与现有 shadcn 组件体系无缝融合</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>劣势</h4>
+                    <ul>
+                        <li>右侧导航可能较长</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="option" data-choice="immersive" onclick="toggleSelect(this)">
+        <div class="letter">B</div>
+        <div class="content">
+            <h3>沉浸式阅读 + 页面目录</h3>
+            <p>
+                内容区更宽（类似
+                Medium），右侧只显示<strong>当前页面</strong>的目录（TOC）。全局导航放在页面顶部或独立导航栏。更适合长文章。
+            </p>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>优势</h4>
+                    <ul>
+                        <li>阅读体验最佳，无干扰</li>
+                        <li>长文章内跳转非常方便</li>
+                        <li>视觉上更现代、高端</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>劣势</h4>
+                    <ul>
+                        <li>切换其他文档需要回到顶部</li>
+                        <li>对 FAQ 这种短内容页略显大材小用</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="option" data-choice="compact" onclick="toggleSelect(this)">
+        <div class="letter">C</div>
+        <div class="content">
+            <h3>双栏紧凑布局</h3>
+            <p>
+                左右两栏接近平分空间。右侧同时显示：全局文档列表 +
+                当前页面目录（分组展示）。信息密度最高，一眼看清全貌。
+            </p>
+            <div class="pros-cons">
+                <div class="pros">
+                    <h4>优势</h4>
+                    <ul>
+                        <li>导航信息最完整</li>
+                        <li>适合内容不太长的帮助文档</li>
+                        <li>页面利用率最高</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h4>劣势</h4>
+                    <ul>
+                        <li>内容区相对较窄</li>
+                        <li>视觉上可能较拥挤</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

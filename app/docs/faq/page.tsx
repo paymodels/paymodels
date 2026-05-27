@@ -1,6 +1,10 @@
 import { Metadata } from 'next';
 import { DocLayout } from '@/app/components/docs/DocLayout';
 import { DocComments } from '@/app/components/docs/DocComments';
+import { DocPageHeader } from '@/components/docs/DocPageHeader';
+import { DocSection } from '@/components/docs/DocSection';
+import { DocH2 } from '@/components/docs/DocH2';
+import { DocParagraph } from '@/components/docs/DocParagraph';
 import { docContents } from '@/lib/docs/content';
 
 export const metadata: Metadata = {
@@ -13,17 +17,14 @@ export default function FAQPage() {
 
   return (
     <DocLayout slug="faq">
-      <h1 className="text-3xl font-bold tracking-tight mb-4">{content.title}</h1>
-      <p className="text-lg text-muted-foreground mb-8">{content.description}</p>
+      <DocPageHeader title={content.title} description={content.description} />
 
       <div className="flex flex-col gap-8">
         {content.sections.map((section, index) => (
-          <section key={index} id={`heading-${index}`}>
-            <h2 className="text-2xl font-semibold mb-4">{section.heading}</h2>
-            <p className="text-base leading-relaxed text-foreground">
-              {section.content}
-            </p>
-          </section>
+          <DocSection key={index} id={`heading-${index}`}>
+            <DocH2>{section.heading}</DocH2>
+            <DocParagraph>{section.content}</DocParagraph>
+          </DocSection>
         ))}
       </div>
 
