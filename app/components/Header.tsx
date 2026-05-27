@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Home, HelpCircle, BookOpen, Sparkles, Zap, LogIn, Search, Menu } from 'lucide-react';
@@ -24,23 +24,9 @@ export default function Header() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [loginOpen, setLoginOpen] = useState(false);
     const [registerOpen, setRegisterOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 20);
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
 
     return (
-        <header
-            className={`sticky top-0 z-50 border-b transition-all duration-300 ${
-                scrolled
-                    ? 'border-border bg-background/95 shadow-sm backdrop-blur-sm'
-                    : 'border-transparent bg-transparent'
-            }`}
-        >
+        <header className={`sticky top-0 z-50 bg-transparent shadow-sm backdrop-blur-sm`}>
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 {/* Left: Logo */}
                 <Link href="/" className="flex shrink-0 items-center gap-2">
