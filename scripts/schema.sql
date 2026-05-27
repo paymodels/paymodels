@@ -27,20 +27,28 @@ CREATE TABLE IF NOT EXISTS pm_products (
   price       NUMERIC(10,2) NOT NULL,
   description TEXT,
   active      BOOLEAN DEFAULT true,
+  featured    BOOLEAN DEFAULT false,
+  features    JSONB DEFAULT '[]'::jsonb,
+  sub_price   TEXT,
   created_at  TIMESTAMPTZ DEFAULT now(),
   updated_at  TIMESTAMPTZ DEFAULT now()
 );
 
-INSERT INTO pm_products (slug, name, price, description)
-SELECT 'plus',  'ChatGPT Plus 月卡', 189,  '基础月卡方案'
+INSERT INTO pm_products (slug, name, price, description, featured, features, sub_price)
+SELECT 'plus',  'ChatGPT Plus 月卡', 189,  '人工充值 · 不成功全额退款', false,
+       '["人工充值服务","充值失败全额退款","基础客服支持","标准到账速度"]'::jsonb, NULL
 WHERE NOT EXISTS (SELECT 1 FROM pm_products WHERE slug = 'plus');
 
-INSERT INTO pm_products (slug, name, price, description)
-SELECT 'pro5x', 'ChatGPT Pro 5X',  864,  '高级 5X 方案'
+INSERT INTO pm_products (slug, name, price, description, featured, features, sub_price)
+SELECT 'pro5x', 'ChatGPT Pro 5X',  864,  '性价比之选', true,
+       '["5 倍 Plus 额度","Codex 编程支持","优先客服响应","极速到账通道","Stripe 国际支付","微信支付支持"]'::jsonb,
+       '$120/月'
 WHERE NOT EXISTS (SELECT 1 FROM pm_products WHERE slug = 'pro5x');
 
-INSERT INTO pm_products (slug, name, price, description)
-SELECT 'pro20x','ChatGPT Pro 20X', 1620, '旗舰 20X 方案'
+INSERT INTO pm_products (slug, name, price, description, featured, features, sub_price)
+SELECT 'pro20x','ChatGPT Pro 20X', 1620, '顶级体验', false,
+       '["20 倍 Plus 额度","Codex 编程支持","专属客户经理","最高优先级到账","Stripe 国际支付","微信支付支持","API 接口对接","企业级 SLA 保障"]'::jsonb,
+       '$225/月'
 WHERE NOT EXISTS (SELECT 1 FROM pm_products WHERE slug = 'pro20x');
 
 -- ============================================================
