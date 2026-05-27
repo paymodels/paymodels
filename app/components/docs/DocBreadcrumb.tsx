@@ -34,7 +34,10 @@ export function DocBreadcrumb({ currentSlug }: DocBreadcrumbProps) {
                 <span className="hidden sm:inline">首页</span>
             </Link>
             <ChevronRight className="h-3 w-3 opacity-40" />
-            <Link href="/docs" className="hover:text-muted-foreground transition-colors duration-200 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <Link
+                href="/docs"
+                className="hover:text-muted-foreground transition-colors duration-200 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
                 文档
             </Link>
             <ChevronRight className="h-3 w-3 opacity-40" />

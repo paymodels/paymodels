@@ -94,7 +94,7 @@ export function DocComments({ slug }: DocCommentsProps) {
                             placeholder="发表您的评论..."
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
-                            className="min-h-[100px] resize-none"
+                            className="min-h-25 resize-none"
                         />
                         <div className="flex items-center justify-between">
                             <span className="text-sm text-muted-foreground">
@@ -127,16 +127,20 @@ export function DocComments({ slug }: DocCommentsProps) {
             )}
 
             {/* 登录弹窗 */}
-            <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
+            <LoginDialog
+                open={showLoginDialog}
+                onOpenChange={setShowLoginDialog}
+                onSwitchToRegister={function (): void {
+                    throw new Error('Function not implemented.');
+                }}
+            />
 
             {/* 评论列表 */}
             <div className="flex flex-col gap-6">
                 {comments.length === 0 ? (
                     <div className="text-center py-10">
                         <p className="text-muted-foreground text-sm mb-1">暂无评论</p>
-                        <p className="text-muted-foreground/60 text-xs">
-                            成为第一个发表评论的人
-                        </p>
+                        <p className="text-muted-foreground/60 text-xs">成为第一个发表评论的人</p>
                     </div>
                 ) : (
                     comments.map((comment) => (
@@ -159,7 +163,7 @@ export function DocComments({ slug }: DocCommentsProps) {
                                         {formatDistanceToNow(new Date(comment.created_at))}
                                     </span>
                                 </div>
-                                <p className="text-sm text-foreground/90 leading-relaxed break-words">
+                                <p className="text-sm text-foreground/90 leading-relaxed wrap-break-word">
                                     {comment.content}
                                 </p>
                             </div>

@@ -57,9 +57,9 @@ function NavGroup({ group, currentPath }: { group: DocNavGroup; currentPath: str
                         <Link
                             key={item.slug}
                             href={item.href}
-                            className={`py-1.5 pl-3 text-sm transition-all duration-200 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 ${
+                            className={`py-1.5 pl-3 text-sm transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 ${
                                 currentPath === item.href
-                                    ? 'text-primary font-medium border-l-2 border-primary -ml-[2px]'
+                                    ? 'text-primary font-medium border-l-2 border-primary -ml-0.5'
                                     : 'text-muted-foreground hover:text-foreground hover:pl-4'
                             }`}
                         >
