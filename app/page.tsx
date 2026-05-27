@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import ScrollLink from './components/ScrollLink';
 import { ArrowRight, BookOpen, ChevronDown, ShieldCheck, Zap, Wallet, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,12 @@ import Tutorial from './components/Tutorial';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import Reveal from './components/Reveal';
+
+export const metadata: Metadata = {
+    title: 'ChatGPT Plus / Pro 官方充值 — 安全、快速、可靠',
+    description:
+        '官方渠道充值 ChatGPT Plus 月卡、Pro 5X、Pro 20X，充值失败全额退款，Token 仅用于本次充值。支持微信支付和 Stripe。',
+};
 
 export default function Home() {
     return (

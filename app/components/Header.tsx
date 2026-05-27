@@ -104,7 +104,7 @@ export default function Header() {
                                 <Menu />
                             </Button>
                         </SheetTrigger>
-                        <SheetContent side="right" className="w-[280px]">
+                        <SheetContent side="right" className="w-70">
                             <SheetHeader>
                                 <SheetTitle className="text-left">
                                     <Link
