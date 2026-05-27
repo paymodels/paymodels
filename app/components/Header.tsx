@@ -13,7 +13,7 @@ import { RegisterDialog } from './RegisterDialog';
 
 const menus = [
     { label: '首页', href: '/', icon: Home },
-    { label: '常见问题', href: '/faq', icon: HelpCircle },
+    { label: '文档', href: '/docs', icon: HelpCircle },
     { label: '教程', href: '/tutorials', icon: BookOpen },
     { label: 'Gemini', href: '/gemini', icon: Sparkles },
     { label: 'Grok', href: '/grok', icon: Zap },
