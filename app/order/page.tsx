@@ -180,12 +180,12 @@ function OrderForm() {
         if (!selected || isCreatingOrder) return;
         setIsCreatingOrder(true);
         try {
-            const res = await fetch("/api/orders", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     plan,
-                    amount: parseFloat(selected.price.replace(/[^0-9.]/g, "")),
+                    amount: parseFloat(selected.price.replace(/[^0-9.]/g, '')),
                     payment_method: method,
                     access_token: token,
                 }),
@@ -480,9 +480,7 @@ function OrderForm() {
                                             升级请求已提交，客服会按订单信息开始处理。
                                         </AlertTitle>
                                         {orderId && (
-                                            <AlertDescription>
-                                                订单编号：{orderId}
-                                            </AlertDescription>
+                                            <AlertDescription>订单编号：{orderId}</AlertDescription>
                                         )}
                                         <AlertDescription>
                                             如需核对订单，可提供所选方案和支付方式。

@@ -9,6 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { signOut, useSession } from '@/lib/auth-client';
 import { LoginDialog } from './LoginDialog';
+import { RegisterDialog } from './RegisterDialog';
 
 const menus = [
     { label: '首页', href: '/', icon: Home },
@@ -22,6 +23,7 @@ export default function Header() {
     const { data: session } = useSession();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [loginOpen, setLoginOpen] = useState(false);
+    const [registerOpen, setRegisterOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -78,9 +80,9 @@ export default function Header() {
                                 退出
                             </Button>
                             <Avatar className="size-8">
-                                <AvatarImage src={session.user?.image ?? ""} />
+                                <AvatarImage src={session.user?.image ?? ''} />
                                 <AvatarFallback className="text-xs">
-                                    {session.user?.name?.[0] ?? "U"}
+                                    {session.user?.name?.[0] ?? 'U'}
                                 </AvatarFallback>
                             </Avatar>
                         </div>
@@ -160,9 +162,9 @@ export default function Header() {
                                                 退出
                                             </Button>
                                             <Avatar className="size-8">
-                                                <AvatarImage src={session.user?.image ?? ""} />
+                                                <AvatarImage src={session.user?.image ?? ''} />
                                                 <AvatarFallback className="text-xs">
-                                                    {session.user?.name?.[0] ?? "U"}
+                                                    {session.user?.name?.[0] ?? 'U'}
                                                 </AvatarFallback>
                                             </Avatar>
                                         </div>
@@ -184,7 +186,22 @@ export default function Header() {
                     </Sheet>
                 </div>
             </div>
-            <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+            <LoginDialog
+                open={loginOpen}
+                onOpenChange={setLoginOpen}
+                onSwitchToRegister={() => {
+                    setLoginOpen(false);
+                    setRegisterOpen(true);
+                }}
+            />
+            <RegisterDialog
+                open={registerOpen}
+                onOpenChange={setRegisterOpen}
+                onSwitchToLogin={() => {
+                    setRegisterOpen(false);
+                    setLoginOpen(true);
+                }}
+            />
         </header>
     );
 }

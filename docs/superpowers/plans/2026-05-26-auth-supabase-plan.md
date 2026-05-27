@@ -13,6 +13,7 @@
 ### Task 1: Install Dependencies
 
 **Files:**
+
 - Modify: `package.json`
 
 - [ ] **Step 1: Run install commands**
@@ -31,6 +32,7 @@ Expected: Dependencies added to `package.json` and `pnpm-lock.yaml`.
 ### Task 2: Create Environment Variable Template
 
 **Files:**
+
 - Create: `.env.local`
 
 - [ ] **Step 1: Write .env.local template**
@@ -55,17 +57,18 @@ This file is `.gitignore`d. Developer fills in values manually. Generate `AUTH_S
 ### Task 3: Create Supabase Server Client
 
 **Files:**
+
 - Create: `lib/supabase/server.ts`
 
 - [ ] **Step 1: Write server client**
 
 ```ts
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
 
 export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
 );
 ```
 
@@ -76,16 +79,17 @@ Used by: API routes, NextAuth callbacks, Server Components. Uses service_role ke
 ### Task 4: Create Supabase Browser Client
 
 **Files:**
+
 - Create: `lib/supabase/client.ts`
 
 - [ ] **Step 1: Write browser client**
 
 ```ts
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
 
 export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 ```
 
@@ -96,19 +100,20 @@ Used for: reading public data (products) on client side. Uses anon key → RLS e
 ### Task 5: Create NextAuth Session Type Augmentation
 
 **Files:**
+
 - Create: `types/next-auth.d.ts`
 
 - [ ] **Step 1: Write type augmentation**
 
 ```ts
-import { DefaultSession } from "next-auth";
+import { DefaultSession } from 'next-auth';
 
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-    } & DefaultSession["user"];
-  }
+declare module 'next-auth' {
+    interface Session {
+        user: {
+            id: string;
+        } & DefaultSession['user'];
+    }
 }
 ```
 
@@ -119,89 +124,90 @@ This adds `session.user.id` (Supabase users.id) to the type system.
 ### Task 6: Create NextAuth Configuration
 
 **Files:**
+
 - Create: `lib/auth.ts`
 
 - [ ] **Step 1: Write auth config**
 
 ```ts
-import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import NextAuth from 'next-auth';
+import Google from 'next-auth/providers/google';
+import Credentials from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
+import { supabaseAdmin } from '@/lib/supabase/server';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID!,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    }),
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      authorize: async (credentials) => {
-        const { data: user } = await supabaseAdmin
-          .from("users")
-          .select("*")
-          .eq("email", credentials.email as string)
-          .single();
-
-        if (!user || !user.password_hash) return null;
-
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password_hash
-        );
-        if (!isValid) return null;
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.avatar_url,
-        };
-      },
-    }),
-  ],
-  callbacks: {
-    signIn: async ({ user, account }) => {
-      if (account?.provider === "google") {
-        const { data } = await supabaseAdmin
-          .from("users")
-          .upsert(
-            {
-              email: user.email!,
-              name: user.name,
-              avatar_url: user.image,
-              google_id: account.providerAccountId,
+    providers: [
+        Google({
+            clientId: process.env.AUTH_GOOGLE_ID!,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+        }),
+        Credentials({
+            credentials: {
+                email: { label: 'Email', type: 'email' },
+                password: { label: 'Password', type: 'password' },
             },
-            { onConflict: "email" }
-          )
-          .select("id")
-          .single();
+            authorize: async (credentials) => {
+                const { data: user } = await supabaseAdmin
+                    .from('pm_users')
+                    .select('*')
+                    .eq('email', credentials.email as string)
+                    .single();
 
-        if (data) user.id = data.id;
-      }
-      return true;
+                if (!user || !user.password_hash) return null;
+
+                const isValid = await bcrypt.compare(
+                    credentials.password as string,
+                    user.password_hash
+                );
+                if (!isValid) return null;
+
+                return {
+                    id: user.id,
+                    email: user.email,
+                    name: user.name,
+                    image: user.avatar_url,
+                };
+            },
+        }),
+    ],
+    callbacks: {
+        signIn: async ({ user, account }) => {
+            if (account?.provider === 'google') {
+                const { data } = await supabaseAdmin
+                    .from('pm_users')
+                    .upsert(
+                        {
+                            email: user.email!,
+                            name: user.name,
+                            avatar_url: user.image,
+                            google_id: account.providerAccountId,
+                        },
+                        { onConflict: 'email' }
+                    )
+                    .select('id')
+                    .single();
+
+                if (data) user.id = data.id;
+            }
+            return true;
+        },
+        jwt: async ({ token, user }) => {
+            if (user) {
+                token.sub = user.id;
+            }
+            return token;
+        },
+        session: async ({ session, token }) => {
+            if (session.user) {
+                session.user.id = token.sub as string;
+            }
+            return session;
+        },
     },
-    jwt: async ({ token, user }) => {
-      if (user) {
-        token.sub = user.id;
-      }
-      return token;
+    pages: {
+        signIn: '/',
     },
-    session: async ({ session, token }) => {
-      if (session.user) {
-        session.user.id = token.sub as string;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/",
-  },
 });
 ```
 
@@ -210,12 +216,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 ### Task 7: Create NextAuth API Route Handler
 
 **Files:**
+
 - Create: `app/api/auth/[...nextauth]/route.ts`
 
 - [ ] **Step 1: Write route handler**
 
 ```ts
-import { handlers } from "@/lib/auth";
+import { handlers } from '@/lib/auth';
 
 export const { GET, POST } = handlers;
 ```
@@ -227,16 +234,17 @@ This exposes NextAuth endpoints at `/api/auth/signin`, `/api/auth/callback`, etc
 ### Task 8: Create Client Auth Helper
 
 **Files:**
+
 - Create: `lib/auth-client.ts`
 
 - [ ] **Step 1: Write client helper**
 
 ```ts
-"use client";
+'use client';
 
-import { useSession } from "next-auth/react";
+import { useSession } from 'next-auth/react';
 
-export { signIn, signOut, useSession } from "next-auth/react";
+export { signIn, signOut, useSession } from 'next-auth/react';
 ```
 
 Re-exports client-side hooks with `"use client"` directive already applied.
@@ -246,15 +254,16 @@ Re-exports client-side hooks with `"use client"` directive already applied.
 ### Task 9: Create Route Protection Middleware
 
 **Files:**
+
 - Create: `middleware.ts`
 
 - [ ] **Step 1: Write middleware**
 
 ```ts
-export { auth as middleware } from "@/lib/auth";
+export { auth as middleware } from '@/lib/auth';
 
 export const config = {
-  matcher: ["/order", "/orders", "/api/orders/:path*"],
+    matcher: ['/order', '/orders', '/api/orders/:path*'],
 };
 ```
 
@@ -265,6 +274,7 @@ Unauthenticated users visiting `/order` or order API routes will be redirected t
 ### Task 10: Add SessionProvider to Root Layout
 
 **Files:**
+
 - Modify: `app/layout.tsx`
 
 - [ ] **Step 1: Read current file**
@@ -318,7 +328,7 @@ export default function RootLayout({
 Replace the `export default function RootLayout` block with:
 
 ```tsx
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from 'next-auth/react';
 
 // ... keep all imports above ...
 
@@ -351,75 +361,73 @@ export default function RootLayout({
 ### Task 11: Create Orders API Route (List + Create)
 
 **Files:**
+
 - Create: `app/api/orders/route.ts`
 
 - [ ] **Step 1: Write orders route handler**
 
 ```ts
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { supabaseAdmin } from '@/lib/supabase/server';
 
 export async function GET() {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "未登录" }, { status: 401 });
-  }
+    const session = await auth();
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: '未登录' }, { status: 401 });
+    }
 
-  const { data: orders, error } = await supabaseAdmin
-    .from("orders")
-    .select("*, product:products(*)")
-    .eq("user_id", session.user.id)
-    .order("created_at", { ascending: false });
+    const { data: orders, error } = await supabaseAdmin
+        .from('pm_orders')
+        .select('*, product:pm_products(*)')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+    if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
-  return NextResponse.json(orders);
+    return NextResponse.json(orders);
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "未登录" }, { status: 401 });
-  }
+    const session = await auth();
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: '未登录' }, { status: 401 });
+    }
 
-  const body = await req.json();
-  const { plan, amount, payment_method, access_token } = body;
+    const body = await req.json();
+    const { plan, amount, payment_method, access_token } = body;
 
-  if (!plan || !amount) {
-    return NextResponse.json(
-      { error: "缺少必要参数 plan 或 amount" },
-      { status: 400 }
-    );
-  }
+    if (!plan || !amount) {
+        return NextResponse.json({ error: '缺少必要参数 plan 或 amount' }, { status: 400 });
+    }
 
-  const { data: product } = await supabaseAdmin
-    .from("products")
-    .select("id")
-    .eq("slug", plan)
-    .single();
+    const { data: product } = await supabaseAdmin
+        .from('pm_products')
+        .select('id')
+        .eq('slug', plan)
+        .single();
 
-  const { data: order, error } = await supabaseAdmin
-    .from("orders")
-    .insert({
-      user_id: session.user.id,
-      product_id: product?.id ?? null,
-      plan,
-      amount,
-      payment_method: payment_method ?? null,
-      access_token: access_token ?? null,
-      status: "pending",
-    })
-    .select("*, product:products(*)")
-    .single();
+    const { data: order, error } = await supabaseAdmin
+        .from('pm_orders')
+        .insert({
+            user_id: session.user.id,
+            product_id: product?.id ?? null,
+            plan,
+            amount,
+            payment_method: payment_method ?? null,
+            access_token: access_token ?? null,
+            status: 'pending',
+        })
+        .select('*, product:pm_products(*)')
+        .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+    if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
-  return NextResponse.json(order, { status: 201 });
+    return NextResponse.json(order, { status: 201 });
 }
 ```
 
@@ -428,79 +436,74 @@ export async function POST(req: NextRequest) {
 ### Task 12: Create Order Detail API Route (Get + Update)
 
 **Files:**
+
 - Create: `app/api/orders/[id]/route.ts`
 
 - [ ] **Step 1: Write order detail route handler**
 
 ```ts
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { supabaseAdmin } from '@/lib/supabase/server';
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "未登录" }, { status: 401 });
-  }
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const session = await auth();
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: '未登录' }, { status: 401 });
+    }
 
-  const { id } = await params;
+    const { id } = await params;
 
-  const { data: order, error } = await supabaseAdmin
-    .from("orders")
-    .select("*, product:products(*), payments(*)")
-    .eq("id", id)
-    .eq("user_id", session.user.id)
-    .single();
+    const { data: order, error } = await supabaseAdmin
+        .from('pm_orders')
+        .select('*, product:pm_products(*), pm_payments(*)')
+        .eq('id', id)
+        .eq('user_id', session.user.id)
+        .single();
 
-  if (error || !order) {
-    return NextResponse.json({ error: "订单不存在" }, { status: 404 });
-  }
+    if (error || !order) {
+        return NextResponse.json({ error: '订单不存在' }, { status: 404 });
+    }
 
-  return NextResponse.json(order);
+    return NextResponse.json(order);
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "未登录" }, { status: 401 });
-  }
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const session = await auth();
+    if (!session?.user?.id) {
+        return NextResponse.json({ error: '未登录' }, { status: 401 });
+    }
 
-  const { id } = await params;
-  const body = await req.json();
+    const { id } = await params;
+    const body = await req.json();
 
-  const { data: existing } = await supabaseAdmin
-    .from("orders")
-    .select("id")
-    .eq("id", id)
-    .eq("user_id", session.user.id)
-    .single();
+    const { data: existing } = await supabaseAdmin
+        .from('pm_orders')
+        .select('id')
+        .eq('id', id)
+        .eq('user_id', session.user.id)
+        .single();
 
-  if (!existing) {
-    return NextResponse.json({ error: "订单不存在" }, { status: 404 });
-  }
+    if (!existing) {
+        return NextResponse.json({ error: '订单不存在' }, { status: 404 });
+    }
 
-  const { data: order, error } = await supabaseAdmin
-    .from("orders")
-    .update({
-      status: body.status,
-      payment_method: body.payment_method,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id)
-    .select("*, product:products(*)")
-    .single();
+    const { data: order, error } = await supabaseAdmin
+        .from('pm_orders')
+        .update({
+            status: body.status,
+            payment_method: body.payment_method,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select('*, product:pm_products(*)')
+        .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+    if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
-  return NextResponse.json(order);
+    return NextResponse.json(order);
 }
 ```
 
@@ -509,6 +512,7 @@ export async function PATCH(
 ### Task 13: Modify Header to Use Real Auth
 
 **Files:**
+
 - Modify: `app/components/Header.tsx`
 
 - [ ] **Step 1: Read current file**
@@ -553,91 +557,89 @@ export default function Header() {
 - [ ] **Step 2: Replace state and Desktop auth buttons**
 
 In imports, add:
+
 ```tsx
 import { AvatarImage } from '@/components/ui/avatar';
 import { signIn, signOut, useSession } from '@/lib/auth-client';
 ```
 
 Replace:
+
 ```tsx
 const [loggedIn, setLoggedIn] = useState(false);
 ```
+
 with:
+
 ```tsx
 const { data: session } = useSession();
 ```
 
 Replace the Desktop auth section (lines 66-87):
+
 ```tsx
-{loggedIn ? (
-    <div className="hidden items-center gap-2 sm:flex">
-        <Button variant="ghost" size="sm" asChild>
-            <Link href="/orders">
-                <Search />
-                查询订单
-            </Link>
+{
+    loggedIn ? (
+        <div className="hidden items-center gap-2 sm:flex">
+            <Button variant="ghost" size="sm" asChild>
+                <Link href="/orders">
+                    <Search />
+                    查询订单
+                </Link>
+            </Button>
+            <Avatar className="h-8 w-8">
+                <AvatarFallback className="text-xs">U</AvatarFallback>
+            </Avatar>
+        </div>
+    ) : (
+        <Button size="sm" className="hidden sm:inline-flex" onClick={() => setLoggedIn(true)}>
+            <LogIn />
+            Sign in
         </Button>
-        <Avatar className="h-8 w-8">
-            <AvatarFallback className="text-xs">U</AvatarFallback>
-        </Avatar>
-    </div>
-) : (
-    <Button
-        size="sm"
-        className="hidden sm:inline-flex"
-        onClick={() => setLoggedIn(true)}
-    >
-        <LogIn />
-        Sign in
-    </Button>
-)}
+    );
+}
 ```
 
 with:
+
 ```tsx
-{session ? (
-    <div className="hidden items-center gap-2 sm:flex">
-        <Button variant="ghost" size="sm" asChild>
-            <Link href="/orders">
-                <Search data-icon="inline-start" />
-                查询订单
-            </Link>
+{
+    session ? (
+        <div className="hidden items-center gap-2 sm:flex">
+            <Button variant="ghost" size="sm" asChild>
+                <Link href="/orders">
+                    <Search data-icon="inline-start" />
+                    查询订单
+                </Link>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => signOut()}>
+                退出
+            </Button>
+            <Avatar className="size-8">
+                <AvatarImage src={session.user?.image ?? ''} />
+                <AvatarFallback className="text-xs">
+                    {session.user?.name?.[0] ?? 'U'}
+                </AvatarFallback>
+            </Avatar>
+        </div>
+    ) : (
+        <Button size="sm" className="hidden sm:inline-flex" onClick={() => signIn('google')}>
+            <LogIn data-icon="inline-start" />
+            登录
         </Button>
-        <Button variant="ghost" size="sm" onClick={() => signOut()}>
-            退出
-        </Button>
-        <Avatar className="size-8">
-            <AvatarImage src={session.user?.image ?? ""} />
-            <AvatarFallback className="text-xs">
-                {session.user?.name?.[0] ?? "U"}
-            </AvatarFallback>
-        </Avatar>
-    </div>
-) : (
-    <Button
-        size="sm"
-        className="hidden sm:inline-flex"
-        onClick={() => signIn("google")}
-    >
-        <LogIn data-icon="inline-start" />
-        登录
-    </Button>
-)}
+    );
+}
 ```
 
 - [ ] **Step 3: Replace Mobile Sheet auth section (lines 131-162)**
 
 Replace:
+
 ```tsx
 <div className="mt-6 border-t pt-4">
     {loggedIn ? (
         <div className="flex items-center justify-between">
-            <Button
-                variant="outline"
-                size="sm"
-                asChild
-                onClick={() => setMobileOpen(false)}
-            >
+            <Button variant="outline" size="sm" asChild onClick={() => setMobileOpen(false)}>
                 <Link href="/orders">
                     <Search />
                     查询订单
@@ -663,33 +665,25 @@ Replace:
 ```
 
 with:
+
 ```tsx
 <div className="mt-6 border-t pt-4">
     {session ? (
         <div className="flex items-center justify-between">
-            <Button
-                variant="outline"
-                size="sm"
-                asChild
-                onClick={() => setMobileOpen(false)}
-            >
+            <Button variant="outline" size="sm" asChild onClick={() => setMobileOpen(false)}>
                 <Link href="/orders">
                     <Search data-icon="inline-start" />
                     查询订单
                 </Link>
             </Button>
             <div className="flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => signOut()}
-                >
+                <Button variant="ghost" size="sm" onClick={() => signOut()}>
                     退出
                 </Button>
                 <Avatar className="size-8">
-                    <AvatarImage src={session.user?.image ?? ""} />
+                    <AvatarImage src={session.user?.image ?? ''} />
                     <AvatarFallback className="text-xs">
-                        {session.user?.name?.[0] ?? "U"}
+                        {session.user?.name?.[0] ?? 'U'}
                     </AvatarFallback>
                 </Avatar>
             </div>
@@ -698,7 +692,7 @@ with:
         <Button
             className="w-full"
             onClick={() => {
-                signIn("google");
+                signIn('google');
                 setMobileOpen(false);
             }}
         >
@@ -712,6 +706,7 @@ with:
 - [ ] **Step 4: Remove unused `useState` import**
 
 Remove `useState` from the import:
+
 ```tsx
 import { useEffect } from 'react';
 ```
@@ -721,6 +716,7 @@ import { useEffect } from 'react';
 ### Task 14: Modify Order Page to Call Create Order API
 
 **Files:**
+
 - Modify: `app/order/page.tsx`
 
 - [ ] **Step 1: Add `orderId` state and `createOrder` function**
@@ -732,6 +728,7 @@ const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
 ```
 
 Add:
+
 ```tsx
 const [orderId, setOrderId] = useState<string | null>(null);
 const [isCreatingOrder, setIsCreatingOrder] = useState(false);
@@ -746,12 +743,12 @@ const createOrder = async (method: PaymentMethod) => {
     if (!selected || isCreatingOrder) return;
     setIsCreatingOrder(true);
     try {
-        const res = await fetch("/api/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const res = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 plan,
-                amount: parseFloat(selected.price.replace(/[^0-9.]/g, "")),
+                amount: parseFloat(selected.price.replace(/[^0-9.]/g, '')),
                 payment_method: method,
                 access_token: token,
             }),
@@ -771,6 +768,7 @@ The function accepts `method` as parameter to avoid stale closure on `paymentMet
 - [ ] **Step 3: Modify payment method button onClick to call createOrder with method**
 
 Replace lines 298-301:
+
 ```tsx
 onClick={() => {
     setPaymentMethod(method.value);
@@ -779,6 +777,7 @@ onClick={() => {
 ```
 
 with:
+
 ```tsx
 onClick={() => {
     setPaymentMethod(method.value);
@@ -790,43 +789,33 @@ onClick={() => {
 - [ ] **Step 4: Add `orderId` to the completion step (step 4) Alert**
 
 In the step 4 Alert (lines 451-459), add the order ID display. Replace:
+
 ```tsx
-<AlertTitle>
-    升级请求已提交，客服会按订单信息开始处理。
-</AlertTitle>
+<AlertTitle>升级请求已提交，客服会按订单信息开始处理。</AlertTitle>
 ```
 
 with:
+
 ```tsx
-<AlertTitle>
-    升级请求已提交，客服会按订单信息开始处理。
-</AlertTitle>
-{orderId && (
-    <AlertDescription>
-        订单编号：{orderId}
-    </AlertDescription>
-)}
+<AlertTitle>升级请求已提交，客服会按订单信息开始处理。</AlertTitle>;
+{
+    orderId && <AlertDescription>订单编号：{orderId}</AlertDescription>;
+}
 ```
 
-Note: this adds the orderId line *after* the existing `<AlertDescription>` block on line 456-458. The final block becomes:
+Note: this adds the orderId line _after_ the existing `<AlertDescription>` block on line 456-458. The final block becomes:
 
 ```tsx
-{currentStep === 4 && (
-    <Alert className="border-primary/20 bg-primary/5">
-        <Check className="size-4 text-primary" />
-        <AlertTitle>
-            升级请求已提交，客服会按订单信息开始处理。
-        </AlertTitle>
-        {orderId && (
-            <AlertDescription>
-                订单编号：{orderId}
-            </AlertDescription>
-        )}
-        <AlertDescription>
-            如需核对订单，可提供所选方案和支付方式。
-        </AlertDescription>
-    </Alert>
-)}
+{
+    currentStep === 4 && (
+        <Alert className="border-primary/20 bg-primary/5">
+            <Check className="size-4 text-primary" />
+            <AlertTitle>升级请求已提交，客服会按订单信息开始处理。</AlertTitle>
+            {orderId && <AlertDescription>订单编号：{orderId}</AlertDescription>}
+            <AlertDescription>如需核对订单，可提供所选方案和支付方式。</AlertDescription>
+        </Alert>
+    );
+}
 ```
 
 ---
@@ -834,6 +823,7 @@ Note: this adds the orderId line *after* the existing `<AlertDescription>` block
 ### Task 15: Database Schema (Manual SQL)
 
 **Files:**
+
 - Reference: SQL schema in spec at `docs/superpowers/specs/2026-05-26-auth-supabase-design.md`
 
 This task is **manual** — run in Supabase SQL Editor.

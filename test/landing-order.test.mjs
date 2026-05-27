@@ -131,8 +131,12 @@ test('order summary combines delivery reassurance with payable amount', () => {
 
 test('order page keeps header and form in the left grid column beside summary', () => {
     const gridStart = orderPage.indexOf('lg:grid-cols-[minmax(0,1fr)_380px]');
-    const mainStart = orderPage.indexOf('<main className="checkout-form-stack flex flex-col gap-9">');
-    const asideStart = orderPage.indexOf('<aside className="order-summary-panel lg:sticky lg:top-10">');
+    const mainStart = orderPage.indexOf(
+        '<main className="checkout-form-stack flex flex-col gap-9">'
+    );
+    const asideStart = orderPage.indexOf(
+        '<aside className="order-summary-panel lg:sticky lg:top-10">'
+    );
 
     assert.ok(gridStart > -1);
     assert.ok(mainStart > gridStart);

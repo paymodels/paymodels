@@ -4,24 +4,19 @@ import { useState } from 'react';
 import { LogIn } from 'lucide-react';
 import { signIn } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Field, FieldGroup, FieldLabel, FieldDescription } from '@/components/ui/field';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 
 interface LoginDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    onSwitchToRegister: () => void;
 }
 
-export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
+export function LoginDialog({ open, onOpenChange, onSwitchToRegister }: LoginDialogProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -60,9 +55,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
                 <Card className="border-0 shadow-none">
                     <CardHeader>
                         <CardTitle>登录</CardTitle>
-                        <CardDescription>
-                            使用账号密码或 Google 账号登录
-                        </CardDescription>
+                        <CardDescription>使用账号密码或 Google 账号登录</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleCredentialsLogin}>
@@ -89,9 +82,7 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
                                         required
                                     />
                                 </Field>
-                                {error && (
-                                    <p className="text-sm text-destructive">{error}</p>
-                                )}
+                                {error && <p className="text-sm text-destructive">{error}</p>}
                                 <Field>
                                     <Button type="submit" disabled={loading}>
                                         <LogIn data-icon="inline-start" />
@@ -123,9 +114,19 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
                                         </svg>
                                         Google 登录
                                     </Button>
-                                    <FieldDescription className="text-center">
-                                        没有账号？使用 Google 一键登录
-                                    </FieldDescription>
+                                    <p className="text-center text-sm text-muted-foreground">
+                                        没有账号？{' '}
+                                        <button
+                                            type="button"
+                                            className="text-primary underline underline-offset-2"
+                                            onClick={() => {
+                                                onOpenChange(false);
+                                                onSwitchToRegister();
+                                            }}
+                                        >
+                                            注册
+                                        </button>
+                                    </p>
                                 </Field>
                             </FieldGroup>
                         </form>

@@ -40,7 +40,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ============================================================
 -- users: 用户表
 -- ============================================================
-CREATE TABLE users (
+CREATE TABLE pm_users (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email         TEXT UNIQUE NOT NULL,
   name          TEXT,
@@ -57,7 +57,7 @@ CREATE TABLE users (
 -- ============================================================
 -- products: 产品表
 -- ============================================================
-CREATE TABLE products (
+CREATE TABLE pm_products (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug        TEXT UNIQUE NOT NULL CHECK (slug IN ('plus', 'pro5x', 'pro20x')),
   name        TEXT NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE products (
   updated_at  TIMESTAMPTZ DEFAULT now()
 );
 
-INSERT INTO products (slug, name, price, description) VALUES
+INSERT INTO pm_products (slug, name, price, description) VALUES
   ('plus',   'ChatGPT Plus 月卡',  189,  '基础月卡方案'),
   ('pro5x',  'ChatGPT Pro 5X',    864,  '高级 5X 方案'),
   ('pro20x', 'ChatGPT Pro 20X',  1620,  '旗舰 20X 方案');
@@ -76,10 +76,10 @@ INSERT INTO products (slug, name, price, description) VALUES
 -- ============================================================
 -- orders: 订单表
 -- ============================================================
-CREATE TABLE orders (
+CREATE TABLE pm_orders (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id         UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-  product_id      UUID REFERENCES products(id),
+  user_id         UUID REFERENCES pm_users(id) ON DELETE CASCADE NOT NULL,
+  product_id      UUID REFERENCES pm_products(id),
   plan            TEXT NOT NULL CHECK (plan IN ('plus', 'pro5x', 'pro20x')),
   amount          NUMERIC(10,2) NOT NULL,
   status          TEXT NOT NULL DEFAULT 'pending'
@@ -93,10 +93,10 @@ CREATE TABLE orders (
 -- ============================================================
 -- payments: 支付记录表
 -- ============================================================
-CREATE TABLE payments (
+CREATE TABLE pm_payments (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  order_id        UUID REFERENCES orders(id) ON DELETE CASCADE NOT NULL,
-  user_id         UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  order_id        UUID REFERENCES pm_orders(id) ON DELETE CASCADE NOT NULL,
+  user_id         UUID REFERENCES pm_users(id) ON DELETE CASCADE NOT NULL,
   method          TEXT NOT NULL CHECK (method IN ('wechat', 'stripe')),
   amount          NUMERIC(10,2) NOT NULL,
   status          TEXT NOT NULL DEFAULT 'pending'
@@ -109,24 +109,24 @@ CREATE TABLE payments (
 -- ============================================================
 -- RLS Policies
 -- ============================================================
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pm_users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pm_orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pm_payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pm_products ENABLE ROW LEVEL SECURITY;
 
 -- Products: anyone can read (public pricing)
-CREATE POLICY "Anyone can read products" ON products FOR SELECT USING (true);
+CREATE POLICY "Anyone can read products" ON pm_products FOR SELECT USING (true);
 
 -- Users: read own data
-CREATE POLICY "Users read own data" ON users
+CREATE POLICY "Users read own data" ON pm_users
   FOR SELECT USING (auth.uid() = id);
 
 -- Orders: CRUD own orders
-CREATE POLICY "Users CRUD own orders" ON orders
+CREATE POLICY "Users CRUD own orders" ON pm_orders
   FOR ALL USING (auth.uid() = user_id);
 
 -- Payments: read own payments
-CREATE POLICY "Users read own payments" ON payments
+CREATE POLICY "Users read own payments" ON pm_payments
   FOR SELECT USING (auth.uid() = user_id);
 ```
 
@@ -179,7 +179,7 @@ app/api/orders/[id]/
   route.ts                         # [NEW] GET (detail) + PATCH (update status)
 
 app/components/Header.tsx          # [MODIFIED] Replace mock login with real auth
-app/order/page.tsx                 # [MODIFIED] Call POST /api/orders on payment step
+app/order/page.tsx                 # [MODIFIED] Call POST /api/orders on pm_,*ment step
 
 package.json                       # [MODIFIED] Add next-auth, @supabase/supabase-js, bcryptjs
 .env.local                         # [NEW] Created manually by developer
@@ -218,7 +218,7 @@ package.json                       # [MODIFIED] Add next-auth, @supabase/supabas
 ```ts
 // Routes that require authentication
 export const config = {
-  matcher: ["/order", "/orders", "/api/orders/:path*"]
+    matcher: ['/order', '/orders', '/api/orders/:path*'],
 };
 // Unauthenticated users → redirect to /
 ```
@@ -230,11 +230,11 @@ export const config = {
 ### `POST /api/orders` — Create Order
 
 **Auth:** Required (session.user.id)
-**Body:** `{ plan: string, amount: number, payment_method?: string, access_token?: string }`
+**Body:** `{ plan: string, amount: number, pm_,*ment_method?: string, access_token?: string }`
 **Response:** `{ id: uuid, ...order }`
 
 1. Lookup product by slug → get product_id
-2. Insert into orders (user_id, product_id, plan, amount, payment_method, access_token)
+2. Insert into orders (user*id, product_id, plan, amount, pm*,\*ment_method, access_token)
 3. Return created order
 
 ### `GET /api/orders` — List User Orders
@@ -250,7 +250,7 @@ export const config = {
 ### `PATCH /api/orders/[id]` — Update Order Status
 
 **Auth:** Required, ownership check
-**Body:** `{ status: string, payment_method?: string }`
+**Body:** `{ status: string, pm_,*ment_method?: string }`
 **Response:** `{ id, ...updated_order }`
 
 ---
@@ -260,12 +260,12 @@ export const config = {
 ### Server Client (`lib/supabase/server.ts`)
 
 ```ts
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
 
 export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
 );
 ```
 
@@ -277,11 +277,11 @@ export const supabaseAdmin = createClient(
 ### Browser Client (`lib/supabase/client.ts`)
 
 ```ts
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
 
 export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 ```
 
@@ -294,75 +294,79 @@ export const supabase = createClient(
 ## NextAuth Config (`lib/auth.ts`)
 
 ```ts
-import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import NextAuth from 'next-auth';
+import Google from 'next-auth/providers/google';
+import Credentials from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
+import { supabaseAdmin } from '@/lib/supabase/server';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID!,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    }),
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      authorize: async (credentials) => {
-        const { data: user } = await supabaseAdmin
-          .from("users")
-          .select("*")
-          .eq("email", credentials.email as string)
-          .single();
+    providers: [
+        Google({
+            clientId: process.env.AUTH_GOOGLE_ID!,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+        }),
+        Credentials({
+            credentials: {
+                email: { label: 'Email', type: 'email' },
+                password: { label: 'Password', type: 'password' },
+            },
+            authorize: async (credentials) => {
+                const { data: user } = await supabaseAdmin
+                    .from('pm_users')
+                    .select('*')
+                    .eq('email', credentials.email as string)
+                    .single();
 
-        if (!user || !user.password_hash) return null;
+                if (!user || !user.password_hash) return null;
 
-        const isValid = await bcrypt.compare(
-          credentials.password as string, user.password_hash
-        );
-        if (!isValid) return null;
+                const isValid = await bcrypt.compare(
+                    credentials.password as string,
+                    user.password_hash
+                );
+                if (!isValid) return null;
 
-        return { id: user.id, email: user.email, name: user.name, image: user.avatar_url };
-      },
-    }),
-  ],
-  callbacks: {
-    signIn: async ({ user, account }) => {
-      if (account?.provider === "google") {
-        const { data } = await supabaseAdmin
-          .from("users")
-          .upsert({
-            email: user.email!,
-            name: user.name,
-            avatar_url: user.image,
-            google_id: account.providerAccountId,
-          }, { onConflict: "email" })
-          .select("id")
-          .single();
+                return { id: user.id, email: user.email, name: user.name, image: user.avatar_url };
+            },
+        }),
+    ],
+    callbacks: {
+        signIn: async ({ user, account }) => {
+            if (account?.provider === 'google') {
+                const { data } = await supabaseAdmin
+                    .from('pm_users')
+                    .upsert(
+                        {
+                            email: user.email!,
+                            name: user.name,
+                            avatar_url: user.image,
+                            google_id: account.providerAccountId,
+                        },
+                        { onConflict: 'email' }
+                    )
+                    .select('id')
+                    .single();
 
-        if (data) user.id = data.id;
-      }
-      return true;
+                if (data) user.id = data.id;
+            }
+            return true;
+        },
+        jwt: async ({ token, user }) => {
+            if (user) {
+                token.sub = user.id; // supabase users.id
+            }
+            return token;
+        },
+        session: async ({ session, token }) => {
+            if (session.user) {
+                session.user.id = token.sub as string;
+            }
+            return session;
+        },
     },
-    jwt: async ({ token, user }) => {
-      if (user) {
-        token.sub = user.id;  // supabase users.id
-      }
-      return token;
+    pages: {
+        signIn: '/', // Use homepage with modal/dropdown instead of dedicated page
     },
-    session: async ({ session, token }) => {
-      if (session.user) {
-        session.user.id = token.sub as string;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/",  // Use homepage with modal/dropdown instead of dedicated page
-  },
 });
 ```
 
@@ -371,8 +375,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 ## Client Auth Helpers (`lib/auth-client.ts`)
 
 ```ts
-"use client";
-import { useSession } from "next-auth/react";
+'use client';
+import { useSession } from 'next-auth/react';
 export { signIn, signOut, useSession };
 ```
 
@@ -381,56 +385,62 @@ export { signIn, signOut, useSession };
 ## Header Integration (`app/components/Header.tsx`)
 
 **Before (mock):**
+
 ```tsx
 const [loggedIn, setLoggedIn] = useState(false);
-<Button onClick={() => setLoggedIn(true)}>Sign in</Button>
+<Button onClick={() => setLoggedIn(true)}>Sign in</Button>;
 ```
 
 **After (real):**
+
 ```tsx
-"use client";
-import { signIn, signOut, useSession } from "@/lib/auth-client";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+'use client';
+import { signIn, signOut, useSession } from '@/lib/auth-client';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 // In component:
 const { data: session } = useSession();
 
-{session ? (
-  <div className="flex items-center gap-3">
-    <Avatar className="size-8">
-      <AvatarImage src={session.user?.image ?? ""} />
-      <AvatarFallback>{session.user?.name?.[0] ?? "U"}</AvatarFallback>
-    </Avatar>
-    <span className="text-sm">{session.user?.name}</span>
-    <Button variant="outline" size="sm" onClick={() => signOut()}>退出</Button>
-  </div>
-) : (
-  <Button onClick={() => signIn("google")}>Google 登录</Button>
-)}
+{
+    session ? (
+        <div className="flex items-center gap-3">
+            <Avatar className="size-8">
+                <AvatarImage src={session.user?.image ?? ''} />
+                <AvatarFallback>{session.user?.name?.[0] ?? 'U'}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm">{session.user?.name}</span>
+            <Button variant="outline" size="sm" onClick={() => signOut()}>
+                退出
+            </Button>
+        </div>
+    ) : (
+        <Button onClick={() => signIn('google')}>Google 登录</Button>
+    );
+}
 ```
 
 ---
 
 ## Order Page Integration (`app/order/page.tsx`)
 
-Changes in the payment step:
+Changes in the pm\_,\*ment step:
 
 ```tsx
-// When user clicks a payment method, create order via API
+// When user clicks a pm_,*ment method, create order via API
 async function createOrder() {
-  const res = await fetch("/api/orders", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      plan: planInfo.slug,
-      amount: planInfo.price,
-      payment_method: selectedMethod,
-      access_token: tokenValue,
-    }),
-  });
-  const order = await res.json();
-  setOrderId(order.id);
+    const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            plan: planInfo.slug,
+            amount: planInfo.price,
+            payment_method: selectedMethod,
+            access_token: tokenValue,
+        }),
+    });
+    const order = await res.json();
+    setOrderId(order.id);
 }
 ```
 
