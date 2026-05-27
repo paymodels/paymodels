@@ -5,5 +5,9 @@ interface DocH2Props {
 }
 
 export function DocH2({ children }: DocH2Props) {
-  return <h2 className="text-2xl font-semibold mb-4">{children}</h2>;
+  return (
+    <h2 className="text-xl sm:text-2xl font-semibold tracking-tight mb-4 text-foreground scroll-mt-24">
+      {children}
+    </h2>
+  );
 }

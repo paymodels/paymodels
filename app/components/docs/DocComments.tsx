@@ -30,6 +30,8 @@ export function DocComments({ slug }: DocCommentsProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showLoginDialog, setShowLoginDialog] = useState(false);
 
+    const [error, setError] = useState<string | null>(null);
+
     useEffect(() => {
         const fetchComments = async () => {
             try {
@@ -37,9 +39,12 @@ export function DocComments({ slug }: DocCommentsProps) {
                 if (response.ok) {
                     const data = await response.json();
                     setComments(data.comments || []);
+                    setError(null);
+                } else {
+                    setError('加载评论失败');
                 }
-            } catch (error) {
-                console.error('Failed to fetch comments:', error);
+            } catch {
+                setError('加载评论失败');
             }
         };
         fetchComments();
@@ -49,6 +54,7 @@ export function DocComments({ slug }: DocCommentsProps) {
         if (!newComment.trim() || isSubmitting) return;
 
         setIsSubmitting(true);
+        setError(null);
         try {
             const response = await fetch('/api/docs/comments', {
                 method: 'POST',
@@ -60,9 +66,11 @@ export function DocComments({ slug }: DocCommentsProps) {
                 const data = await response.json();
                 setComments((prev) => [data.comment, ...prev]);
                 setNewComment('');
+            } else {
+                setError('发表评论失败，请重试');
             }
-        } catch (error) {
-            console.error('Failed to submit comment:', error);
+        } catch {
+            setError('发表评论失败，请重试');
         } finally {
             setIsSubmitting(false);
         }
@@ -111,34 +119,47 @@ export function DocComments({ slug }: DocCommentsProps) {
                 </div>
             )}
 
+            {/* 错误提示 */}
+            {error && (
+                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6 text-sm text-destructive">
+                    {error}
+                </div>
+            )}
+
             {/* 登录弹窗 */}
             <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
 
             {/* 评论列表 */}
             <div className="flex flex-col gap-6">
                 {comments.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">
-                        暂无评论，成为第一个评论的人吧！
-                    </p>
+                    <div className="text-center py-10">
+                        <p className="text-muted-foreground text-sm mb-1">暂无评论</p>
+                        <p className="text-muted-foreground/60 text-xs">
+                            成为第一个发表评论的人
+                        </p>
+                    </div>
                 ) : (
                     comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-4">
-                            <Avatar className="h-10 w-10 shrink-0">
+                        <div
+                            key={comment.id}
+                            className="flex gap-4 group animate-in fade-in duration-300"
+                        >
+                            <Avatar className="h-9 w-9 shrink-0">
                                 <AvatarImage src={comment.user.avatar_url || undefined} />
-                                <AvatarFallback>
+                                <AvatarFallback className="text-xs bg-muted">
                                     {comment.user.name?.charAt(0) || 'U'}
                                 </AvatarFallback>
                             </Avatar>
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
                                     <span className="font-medium text-sm">
                                         {comment.user.name || '匿名用户'}
                                     </span>
-                                    <span className="text-xs text-muted-foreground">
+                                    <span className="text-xs text-muted-foreground/70">
                                         {formatDistanceToNow(new Date(comment.created_at))}
                                     </span>
                                 </div>
-                                <p className="text-sm text-foreground leading-relaxed">
+                                <p className="text-sm text-foreground/90 leading-relaxed break-words">
                                     {comment.content}
                                 </p>
                             </div>

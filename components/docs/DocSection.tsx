@@ -8,7 +8,7 @@ interface DocSectionProps {
 
 export function DocSection({ id, className = '', children }: DocSectionProps) {
   return (
-    <section id={id} className={`mb-8 ${className}`}>
+    <section id={id} className={`mb-10 scroll-mt-24 ${className}`}>
       {children}
     </section>
   );
